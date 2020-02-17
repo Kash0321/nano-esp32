@@ -1,4 +1,5 @@
-﻿using System;
+﻿using nanoFramework.Hardware.Esp32;
+using System;
 using System.Threading;
 using Windows.Devices.Gpio;
 
@@ -60,6 +61,7 @@ namespace VeryFirst.Device.Hcsr04
             }
 
             var startTime = DateTime.UtcNow;
+            var startUSecs = HighResTimer.GetCurrent();
             _lastMeasurment = startTime.Ticks;
 
             // Wait until the pin is LOW again, (that marks the end of the pulse we are measuring)
@@ -67,15 +69,13 @@ namespace VeryFirst.Device.Hcsr04
             {
             }
 
-            var justNow = DateTime.UtcNow;
-            var elapsed = justNow - startTime;
-            //var elapsedTicks = justNow.Ticks - startTime.Ticks;
+            var justNowUSecs = HighResTimer.GetCurrent();
 
             // distance = (time / 2) × velocity of sound (34300 cm/s)
-            //double elapsedMilliseconds = elapsedTicks / 10000;
-            var result = elapsed.TotalMilliseconds / 2.0 * 34.3;
-            //double result = elapsedMilliseconds / 2.0 * 34.30;
-            //Console.WriteLine($"Distance: {result.ToString("D2")} cm. ({elapsedMilliseconds} ms),  ({elapsedTicks} ticks)");
+            double time = justNowUSecs - startUSecs;
+            time /= 1000;
+            var result = time / 2.0 * 34.3;
+
             return result;
         }
 

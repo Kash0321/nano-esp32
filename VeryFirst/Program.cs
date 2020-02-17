@@ -34,7 +34,7 @@ namespace VeryFirst
                     }
                     finally
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(250);
                     }
                 }
             }

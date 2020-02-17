@@ -93,7 +93,8 @@ namespace VeryFirst.Device.Hcsr04
             }
 
             var startTime = DateTime.UtcNow;
-            _lastMeasurment = DateTime.UtcNow.Ticks;
+            var startUSecs = HighResTimer.GetCurrent();
+            _lastMeasurment = startTime.Ticks;
 
             // Wait until the pin is LOW again, (that marks the end of the pulse we are measuring)
             while (_echo.Read() == GpioPinValue.High)
@@ -105,13 +106,12 @@ namespace VeryFirst.Device.Hcsr04
                 }
             }
 
-            var justNow = DateTime.UtcNow;
-            Console.WriteLine($"{startTime.Ticks} - {justNow.Ticks}");
-            var elapsed = justNow - startTime;
+            var justNowUSecs = HighResTimer.GetCurrent();
 
             // distance = (time / 2) × velocity of sound (34300 cm/s)
-            var elapsedSeconds = elapsed.Ticks / 10000000;
-            result = elapsedSeconds / 2.0 * 34.3;
+            double time = justNowUSecs - startUSecs;
+            time /= 1000;
+            result = time / 2.0 * 34.3;
 
             if (result > 400)
             {
